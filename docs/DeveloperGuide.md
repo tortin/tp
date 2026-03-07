@@ -262,71 +262,141 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefer desktop apps over other types
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
+* Prefer desktop apps over other types
+* Is reasonably comfortable using CLI apps
+* Wants to enter candidates’ credentials, which could be extremely large in number
+* Wants to filter and compare candidates by qualifications, distances to workplaces etc
+* Wants to use the program to speed up their other workflows, e.g. writing emails
+* Strongly values punctuality and is strict about lateness, while still aiming to remain fair
 
-**Value proposition**: manage contacts faster than a typical mouse/GUI driven app
+
+**Value proposition**: 
+* Fast and easy search/filter that can check different fields such as salary, qualifications, positions and more. 
+* Pin certain entries for fast comparison or easy access.
+* Take an input of a .csv file with the correct format and with relevant data and automatically add the candidates to the list. 
+* Quickly filter through the candidates for those with the ideal skills (and any other factors). 
+* Calculate the distance between a candidate’s address and the available offices such that the candidate can be sent to the nearest office.
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
+| Priority | As a …​                                                                | I want to …​                                                                         | So that I can…​                                                     |
+|----------|------------------------------------------------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `* * *`  | new recruiter                                                          | auto fill-in suggestions with tooltips explaining what each field means              | correctly enter candidate information without making mistakes       |
+| `* * *`  | recruiter                                                              | add candidates with their names, phone numbers, email addresses                      | easily contact them for future job openings                         |
+| `* * *`  | recruiter                                                              | be able to edit contacts                                                             | fix any minor mistakes I make                                       |
+| `* * *`  | recruiter                                                              | be able to delete contacts                                                           | un-track candidates I am no longer interested in                    |
+| `* * *`  | recruiter                                                              | be able to filter contacts                                                           | search for tags I am interested in                                  |
+| `* * *`  | recruiter                                                              | be able to view all candidates                                                       | know who I have added to the addressbook                            |
+| `* * *`  | recruiter                                                              | tag candidates by their skills                                                       | categorise them by their skills                                     |
+| `* * *`  | recruiter facing candidates with a variety of names                    | be able to add two candidates with the same name                                     |                                                                     |
+| `* * *`  | recruiter                                                              | filter candidates by multiple tags simultaneously                                    | immediately get a shortlisted list of candidates for a job opening  |
+| `* * *`  | time-pressed recruiter                                                 | be able to use a spreadsheet to add many candidates to this address book all at once | save time adding entries                                            |
+| `* *`    | recruiter                                                              | have a log of recent changes made to a candidate                                     | check for mistakes                                                  |
+| `* *`    | careless recruiter                                                     | be able to undo my commands                                                          | my mistakes can be amended quickly                                  |
+| `* *`    | careless recruiter                                                     | be able to copy candidate details for use in another program                         | reduce my chance of mis-typing                                      |
+| `* *`    | recruiter                                                              | be able to create common tag combinations                                            | reuse the same filters easily                                       |
+| `* *`    | recruiter                                                              | be able to assign a status to candidates in the pipeline                             | manage the hiring progress for a particular opening                 |
+| `* *`    | recruiter examining hiring options                                     | be able to compare more than one candidate with each other                           | judge correctly while avoiding manual error                         |
+| `* *`    | recruiter                                                              | be able to view recently viewed candidates                                           | save time from not searching again                                  |
+| `* *`    | recruiter                                                              | be able to assign a rating score to each candidate and filter by rating score        | compare in a quick and objective manner during the final selection  |
+| `*`      | recruiter                                                              | have an email template popup in one click                                            | contact candidates easily                                           |
+| `*`      | recruiter bulk importing data                                          | be notified if there already exists an identical record                              | don’t mistakenly add duplicates and bloat the database              |
+| `*`      | time-pressed recruiter                                                 | be able to edit multiple entries at once                                             | efficiently manage large batches of candidates                      |
+| `*`      | be able to see a quick summary of the most common tags in the database | understand the talent pool better                                                    |                                                                     |
+| `*`      | recruiter                                                              | be able to compare candidates’ living addresses with potential work addresses        | understand how best to hire and deploy them across our many offices |
 
 *{More to be added}*
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `HireLens` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: Add Contact**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1.  User chooses to add a new candidate.
+2.  HireLens requests for details of the candidate.
+3.  User enters necessary information, such as name, phone number, address, email and any optional tags.
+4.  HireLens displays auto fill-in suggestions and formatting guidance.
+5. User confirms the information entered.
+6. HireLens adds the candidate to the list of saved candidates and displays the information of the new candidate added.
+7. HireLens shows the updated list of the full candidate list with the new candidate added
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 3a. HireLens detects missing or invalid data.
 
-  Use case ends.
-
-* 3a. The given index is invalid.
-
-    * 3a1. AddressBook shows an error message.
-
+    * 3a1. HireLens informs the user of the error made and requests corrected information.
+    * 3a2. User enters corrected data.
+    * 
+      Steps 3a1-3a2 are repeated until the data entered are correct.
       Use case resumes at step 2.
+
+      
+**Use case: Edit Contact**
+
+**MSS**
+
+1.  User chooses to edit the details of a candidate.
+2.  HireLens requests for a minimum one parameter to modify and the index of the candidate to be modified.
+3.  User provides the requested data above and the modified data. 
+4.  HireLens edits the details of the candidate and displays the modified details of the candidate.
+5.  HireLens shows the updated list of the candidate list with all filters intact.
+ 
+    Use case ends.
+
+
+**Use case: Filter by Tag**
+
+**MSS**
+
+1.  User chooses to filter the candidate list by tags.
+2.  HireLens requests for a minimum one tag to filter.
+3. User provides the tags to filter the candidates by. 
+4. HireLens filters the candidate list and shows a message informing the user the list has been filtered successfully.
+5. HireLens shows the filtered candidate list.
+
+   Use case ends.
+
+**Extensions**
+
+* 4a. Filter returns empty list (no candidates match the tags given)
+
+    * 4a1. HireLens detects that no candidates match the tags provided. 
+    * 4a2. HireLens informs the user that the filter resulted in an empty list.
+    * 4a3. HireLens shows the full candidate list without any filters.
+
 
 *{More to be added}*
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
-2.  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+1. Efficiency 
+   * System should be able to process commands such as add, edit, delete, and list within 1 second.
+   * System should be able to handle at least 1000 contacts without significant performance loss
+2. Capacity
+   * System should be able to store at least 1000 contacts.
+   * System should be able to read and enter at least 100 contacts from a csv file at a time.
+3. Quality
+   * System should be able to be used by a beginner who has never used the system before.
+   * System should have clear error messages that explain the source of the error and how to correct the error.
+4. Reliability
+   * Data should persist between usage sessions.
+   * Data should not be corruptible.
+5. Compatibility
+   * System should run on Windows, macOS, and Linux with Java 17 and above installed.
 
 *{More to be added}*
 
 ### Glossary
+*{None as of yet}*
 
-* **Mainstream OS**: Windows, Linux, Unix, MacOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
 
 --------------------------------------------------------------------------------------------------------------------
 
