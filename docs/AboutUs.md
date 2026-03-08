@@ -15,7 +15,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](https://github.com/tortin)]
 
-* Role: Team Lead, Developer
+* Role: Developer
 
 ### Heather Marie Lee Wen Xin
 
@@ -23,7 +23,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](https://github.com/CaIraith)]
 
-* Role: Documentation, Developer
+* Role: Developer
 
 ### Ryan Justyn
 
