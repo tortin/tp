@@ -31,5 +31,13 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](https://github.com/rjustyn1)]
 
-* Role: Developer 
+* Role: Developer
+
+### Aaron Quak
+
+<img src="images/aqfw.png" width="200px">
+
+[[github](https://github.com/aqfw)]
+
+* Role: Developer
  
