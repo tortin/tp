@@ -477,8 +477,9 @@ Use case ends.
 **MSS**
 
 1. User requests to add candidate using a csv file.
-2. HireLens adds all contacts specified by the csv file.
-3. HireLens displays the full candidate book.
+2. HireLens checks whether the provided file is in the `.csv` format.
+3. HireLens adds all contacts specified by the csv file.
+4. HireLens displays the full candidate book.
 
 Use case ends.
 
@@ -490,9 +491,15 @@ Use case ends.
 
 Use case ends.
 
-1b. The specified csv file contains information in the wrong format.<br>
-1b1. HireLens informs the user the csv file contains information in the wrong format.<br>
+1b. The specified file is not in `.csv` format (e.g. wrong file extension).<br>
+1b1. HireLens informs the user that only `.csv` files are accepted and prompts for a valid file.<br>
 1b2. HireLens displays the current view of the candidate book.
+
+Use case ends.
+
+1c. The specified csv file contains information in the wrong format.<br>
+1c1. HireLens informs the user the csv file contains information in the wrong format.<br>
+1c2. HireLens displays the current view of the candidate book.
 
 Use case ends.
 
