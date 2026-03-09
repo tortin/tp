@@ -9,10 +9,10 @@ import seedu.address.model.tag.Tag;
 /**
  * Tests that a {@code Person}'s {@code tags} contains all the other tags provided.
  */
-public class PersonContainsTags implements Predicate<Person> {
+public class PersonContainsTagsPredicate implements Predicate<Person> {
     private final Set<Tag> tags;
 
-    public PersonContainsTags(Set<Tag> tags) {
+    public PersonContainsTagsPredicate(Set<Tag> tags) {
         this.tags = tags;
     }
 
@@ -28,11 +28,11 @@ public class PersonContainsTags implements Predicate<Person> {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof PersonContainsTags)) {
+        if (!(other instanceof PersonContainsTagsPredicate)) {
             return false;
         }
 
-        PersonContainsTags otherPersonContainsTags = (PersonContainsTags) other;
+        PersonContainsTagsPredicate otherPersonContainsTags = (PersonContainsTagsPredicate) other;
         return tags.equals(otherPersonContainsTags.tags);
     }
 

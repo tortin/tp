@@ -6,7 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
-import seedu.address.model.person.PersonContainsTags;
+import seedu.address.model.person.PersonContainsTagsPredicate;
 
 /**
  * Finds all candidates in the candidate book containing the tags specified
@@ -21,9 +21,9 @@ public class FilterCommand extends Command {
             + PREFIX_TAG + "python"
             + PREFIX_TAG + "java";
 
-    private final PersonContainsTags predicate;
+    private final PersonContainsTagsPredicate predicate;
 
-    public FilterCommand(PersonContainsTags predicate) {
+    public FilterCommand(PersonContainsTagsPredicate predicate) {
         this.predicate = predicate;
     }
 
