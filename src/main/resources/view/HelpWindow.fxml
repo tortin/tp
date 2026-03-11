@@ -22,27 +22,30 @@
 <?import javafx.stage.Stage?>
 
 <!-- Changed the window root be resizeable with default sizes -->
-<fx:root resizable="true" title="Help" type="javafx.stage.Stage" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" minWidth="600" minHeight="400">
+<fx:root resizable="true" title="Help" type="javafx.stage.Stage" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" width="900" height="700" minWidth="600" minHeight="400">
   <icons>
     <Image url="@/images/help_icon.png" />
   </icons>
   <scene>
-    <Scene>
+    <!--- Default scene width -->
+    <Scene width="900" height="700" >
       <stylesheets>
         <URL value="@HelpWindow.css" />
       </stylesheets>
 
-      <VBox spacing="5.0">
+      <!--- Reference VBox spacing to scene size -->
+      <VBox spacing="5.0" prefWidth="${scene.width}" prefHeight="${scene.height}">
         <padding>
           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
         </padding>
 
-        <!-- Scrollable text area that fills available vertical space -->
-        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <!-- Scrollable text area that fills both available vertical and horizontal space, 10000 as max -->
+        <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" prefHeight="10000">
           <TextArea fx:id="helpMessage"
                     editable="false"
                     wrapText="true"
-                    VBox.vgrow="ALWAYS" />
+                    VBox.vgrow="ALWAYS" 
+                    prefHeight="10000"/>
         </ScrollPane>
 
         <!-- Button row at the bottom -->

@@ -78,7 +78,7 @@ public class HelpWindow extends UiPart<Stage> {
         helpMessage.setText(loadGuideSection());
         helpMessage.setWrapText(true);
         helpMessage.setEditable(false);
-        helpMessage.setStyle("-fx-font-family: monospace; -fx-font-size: 13px;");
+        //helpMessage.setStyle("-fx-font-family: monospace; -fx-font-size: 13px;");
     }
 
     /**
@@ -168,7 +168,6 @@ public class HelpWindow extends UiPart<Stage> {
 
             return lines.subList(start, end)
                     .stream()
-                    .map(HelpWindow::stripMarkdown)
                     .collect(Collectors.joining("\n"));
 
         } catch (Exception e) {
@@ -178,28 +177,7 @@ public class HelpWindow extends UiPart<Stage> {
         }
     }
 
-    /**
-     * Strips common Markdown syntax from a single line, returning plain text.
-     */
-    static String stripMarkdown(String line) {
-        return line
-                .replaceAll("^#{1,6}\\s+", "")                      // headings
-                .replaceAll("(\\*{1,3}|_{1,3})(.*?)\\1", "$2")      // bold / italic
-                .replaceAll("`([^`]*)`", "$1")                       // inline code
-                .replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1")      // links -> text only
-                .replaceAll("!\\[[^\\]]*\\]\\([^)]+\\)", "")         // images -> removed
-                .replaceAll("^>+\\s?", "")                           // blockquotes
-                .replaceAll("^[-*_]{3,}\\s*$", "")                   // horizontal rules
-                .replaceAll("^[-*+]\\s+", "  \u2022 ")               // unordered list -> bullet
-                .replaceAll("^(\\d+)\\.\\s+", "$1. ")                // ordered list numbers
-                .replaceAll("^```.*", "")                            // code fences
-                .replaceAll("<[^>]+>", "")                           // HTML tags
-                .replaceAll("\\{[^}]+\\}", "")                       // Jekyll attributes e.g. {:toc}
-                .trim();
-    }
-    
-    
-    
+
     /**
      * Copies the URL to the user guide to the clipboard.
      */
