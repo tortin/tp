@@ -12,6 +12,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.exceptions.DuplicatePersonException;
 
 /**
  * Adds a person to the address book.
@@ -37,7 +38,12 @@ public class AddCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "New person added: %1$s";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book";
-
+    public static final String MESSAGE_DUPLICATE_EMAIL_AND_PHONE = "A person with this phone number and email address "
+                                                                    + "is already in the address book.";
+    public static final String MESSAGE_DUPLICATE_EMAIL = "A person with this email address is already in the "
+                                                            + "address book.";
+    public static final String MESSAGE_DUPLICATE_PHONE = "A person with this phone number is already in the "
+                                                            + "address book.";
     private final Person toAdd;
 
     /**
@@ -52,11 +58,12 @@ public class AddCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        if (model.hasPerson(toAdd)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
+        try {
+            model.addPerson(toAdd);
+        } catch (DuplicatePersonException e) {
+            throw new CommandException(e.getMessage());
         }
 
-        model.addPerson(toAdd);
         return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
     }
 
@@ -67,11 +74,10 @@ public class AddCommand extends Command {
         }
 
         // instanceof handles nulls
-        if (!(other instanceof AddCommand)) {
+        if (!(other instanceof AddCommand otherAddCommand)) {
             return false;
         }
 
-        AddCommand otherAddCommand = (AddCommand) other;
         return toAdd.equals(otherAddCommand.toAdd);
     }
 
