@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,9 +65,9 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
         validateFileExists(filePath);
 
         List<String> lines = readFileLines(filePath);
-        validateHeader(lines);
+        HeaderInfo headerInfo = validateAndParseHeader(lines);
 
-        List<Person> persons = parseRows(lines);
+        List<Person> persons = parseRows(lines, headerInfo);
         return new AddByCsvCommand(persons);
     }
 
@@ -111,7 +112,7 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
      *
      * @throws ParseException if the header is missing or invalid.
      */
-    private void validateHeader(List<String> lines) throws ParseException {
+    private HeaderInfo validateAndParseHeader(List<String> lines) throws ParseException {
         if (lines.isEmpty()) {
             throw new ParseException(MESSAGE_EMPTY_CSV);
         }
@@ -124,12 +125,32 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
         boolean isValidHeader = "name".equalsIgnoreCase(header[NAME_INDEX].trim())
                 && "phone".equalsIgnoreCase(header[PHONE_INDEX].trim())
                 && "email".equalsIgnoreCase(header[EMAIL_INDEX].trim())
-                && "address".equalsIgnoreCase(header[ADDRESS_INDEX].trim())
-                && "postalCode".equalsIgnoreCase(header[POSTAL_CODE_INDEX].trim());
+                && "address".equalsIgnoreCase(header[ADDRESS_INDEX].trim());
 
         if (!isValidHeader) {
             throw new ParseException(MESSAGE_INVALID_CSV_HEADER);
         }
+
+        boolean hasTagsColumn = false;
+
+        if (!"postalCode".equalsIgnoreCase(header[POSTAL_CODE_INDEX].trim())) {
+            throw new ParseException(MESSAGE_INVALID_CSV_HEADER);
+        }
+
+        if (header.length > TAGS_INDEX) {
+            String sixthHeader = header[TAGS_INDEX].trim();
+            if ("tags".equalsIgnoreCase(sixthHeader)) {
+                hasTagsColumn = true;
+            } else {
+                throw new ParseException(MESSAGE_INVALID_CSV_HEADER);
+            }
+        }
+
+        if (header.length > TAGS_INDEX + 1) {
+            throw new ParseException(MESSAGE_INVALID_CSV_HEADER);
+        }
+
+        return new HeaderInfo(hasTagsColumn);
     }
 
     /**
@@ -137,7 +158,7 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
      *
      * @throws ParseException if any row has invalid data.
      */
-    private List<Person> parseRows(List<String> lines) throws ParseException {
+    private List<Person> parseRows(List<String> lines, HeaderInfo headerInfo) throws ParseException {
         List<Person> persons = new ArrayList<>();
 
         for (int i = 1; i < lines.size(); i++) {
@@ -145,7 +166,7 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
             if (line.isEmpty()) {
                 continue;
             }
-            Person person = parseRow(line, i + 1);
+            Person person = parseRow(line, i + 1, headerInfo);
             persons.add(person);
         }
 
@@ -163,7 +184,7 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
      * @param rowNumber the 1-based row number for error reporting.
      * @throws ParseException if the row data is invalid.
      */
-    private Person parseRow(String row, int rowNumber) throws ParseException {
+    private Person parseRow(String row, int rowNumber, HeaderInfo headerInfo) throws ParseException {
         String[] fields = row.split(",", -1);
 
         if (fields.length < EXPECTED_MIN_COLUMNS) {
@@ -175,9 +196,23 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
             Name name = ParserUtil.parseName(fields[NAME_INDEX]);
             Phone phone = ParserUtil.parsePhone(fields[PHONE_INDEX]);
             Email email = ParserUtil.parseEmail(fields[EMAIL_INDEX]);
-            Address address = ParserUtil.parseAddress(fields[ADDRESS_INDEX]);
-            PostalCode postalCode = ParserUtil.parsePostalCode(fields[POSTAL_CODE_INDEX]);
-            Set<Tag> tags = parseCsvTags(fields, rowNumber);
+            int endExclusive = fields.length;
+            String tagsField = "";
+
+            if (headerInfo.hasTagsColumn) {
+                tagsField = fields[endExclusive - 1];
+                endExclusive--;
+            }
+
+            if (endExclusive <= ADDRESS_INDEX) {
+                throw new ParseException("missing postalCode");
+            }
+            PostalCode postalCode = ParserUtil.parsePostalCode(fields[endExclusive - 1]);
+            endExclusive--;
+
+            String addressField = String.join(",", Arrays.copyOfRange(fields, ADDRESS_INDEX, endExclusive));
+            Address address = ParserUtil.parseAddress(addressField);
+            Set<Tag> tags = parseCsvTags(tagsField);
 
             return new Person(name, phone, email, address, postalCode, tags);
         } catch (ParseException e) {
@@ -186,22 +221,15 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
     }
 
     /**
-     * Parses tags from the CSV row. Tags are expected in the 6th column onward,
-     * separated by semicolons within a single column.
+     * Parses tags from the row's tags field, separated by semicolons.
      *
-     * @param fields the split CSV fields.
-     * @param rowNumber the 1-based row number for error reporting.
+     * @param tagsField the tags field content.
      * @throws ParseException if any tag is invalid.
      */
-    private Set<Tag> parseCsvTags(String[] fields, int rowNumber) throws ParseException {
+    private Set<Tag> parseCsvTags(String tagsField) throws ParseException {
         Set<Tag> tags = new HashSet<>();
 
-        if (fields.length <= TAGS_INDEX) {
-            return tags;
-        }
-
-        String tagsField = fields[TAGS_INDEX].trim();
-        if (tagsField.isEmpty()) {
+        if (tagsField == null || tagsField.trim().isEmpty()) {
             return tags;
         }
 
@@ -215,5 +243,13 @@ public class AddByCsvParser implements Parser<AddByCsvCommand> {
         }
 
         return tags;
+    }
+
+    private static class HeaderInfo {
+        private final boolean hasTagsColumn;
+
+        private HeaderInfo(boolean hasTagsColumn) {
+            this.hasTagsColumn = hasTagsColumn;
+        }
     }
 }

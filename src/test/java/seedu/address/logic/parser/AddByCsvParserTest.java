@@ -87,6 +87,12 @@ public class AddByCsvParserTest {
     }
 
     @Test
+    public void parse_emptyNoContentCsv_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("emptyNoContent.csv").toString();
+        assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_EMPTY_CSV);
+    }
+
+    @Test
     public void parse_headerOnlyCsv_failure() {
         String filePath = TEST_DATA_FOLDER.resolve("headerOnly.csv").toString();
         assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_EMPTY_CSV);
@@ -95,6 +101,30 @@ public class AddByCsvParserTest {
     @Test
     public void parse_invalidHeader_failure() {
         String filePath = TEST_DATA_FOLDER.resolve("invalidHeader.csv").toString();
+        assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_INVALID_CSV_HEADER);
+    }
+
+    @Test
+    public void parse_invalidRequiredHeaderWithEnoughColumns_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("invalidRequiredHeaderWithEnoughColumns.csv").toString();
+        assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_INVALID_CSV_HEADER);
+    }
+
+    @Test
+    public void parse_invalidSixthHeader_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("invalidSixthHeader.csv").toString();
+        assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_INVALID_CSV_HEADER);
+    }
+
+    @Test
+    public void parse_tooManyHeaders_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("tooManyHeaders.csv").toString();
+        assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_INVALID_CSV_HEADER);
+    }
+
+    @Test
+    public void parse_missingPostalCodeHeader_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("missingPostalCodeHeader.csv").toString();
         assertParseFailure(parser, " " + filePath, AddByCsvParser.MESSAGE_INVALID_CSV_HEADER);
     }
 
@@ -146,6 +176,14 @@ public class AddByCsvParserTest {
                         seedu.address.model.person.PostalCode.MESSAGE_CONSTRAINTS));
     }
 
+    @Test
+    public void parse_emptyPostalCode_failure() {
+        String filePath = TEST_DATA_FOLDER.resolve("emptyPostalCode.csv").toString();
+        assertParseFailure(parser, " " + filePath,
+                String.format(AddByCsvParser.MESSAGE_INVALID_ROW, 2,
+                        seedu.address.model.person.PostalCode.MESSAGE_CONSTRAINTS));
+    }
+
     // ==================== Edge-case tests ====================
 
     @Test
@@ -177,6 +215,21 @@ public class AddByCsvParserTest {
                 .withEmail("alice@example.com").withAddress("123 Jurong West Ave 6 #08-111")
                 .withPostalCode("640123")
                 .withTags("friends", "family").build();
+
+        List<Person> expectedPersons = Arrays.asList(alice);
+        assertEquals(new AddByCsvCommand(expectedPersons), result);
+    }
+
+    @Test
+    public void parse_validCsvWithCommaInAddress_success() throws Exception {
+        String filePath = TEST_DATA_FOLDER.resolve("validAddressWithCommas.csv").toString();
+
+        AddByCsvCommand result = parser.parse(" " + filePath);
+
+        Person alice = new PersonBuilder().withName("Alice Pauline").withPhone("94351253")
+                .withEmail("alice@example.com").withAddress("123 Jurong West Ave 6, #08-111")
+                .withPostalCode("640123")
+                .withTags("friends").build();
 
         List<Person> expectedPersons = Arrays.asList(alice);
         assertEquals(new AddByCsvCommand(expectedPersons), result);
