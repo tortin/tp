@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.outlet.Outlet;
 import seedu.address.model.person.Person;
 import seedu.address.model.tag.TagCounter;
 
@@ -23,6 +24,7 @@ public class ModelManager implements Model {
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
+    private final FilteredList<Outlet> filteredOutlets;
     private final TagCounter tagCounter;
 
     /**
@@ -36,6 +38,7 @@ public class ModelManager implements Model {
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        filteredOutlets = new FilteredList<>(this.addressBook.getOutletList());
         tagCounter = new TagCounter(this.addressBook);
     }
 
@@ -116,6 +119,30 @@ public class ModelManager implements Model {
         addressBook.setPerson(target, editedPerson);
     }
 
+    @Override
+    public boolean hasOutlet(Outlet outlet) {
+        requireNonNull(outlet);
+        return addressBook.hasOutlet(outlet);
+    }
+
+    @Override
+    public void deleteOutlet(Outlet target) {
+        addressBook.removeOutlet(target);
+    }
+
+    @Override
+    public void addOutlet(Outlet outlet) {
+        addressBook.addOutlet(outlet);
+        resetFilteredOutletList();
+    }
+
+    @Override
+    public void setOutlet(Outlet target, Outlet editedOutlet) {
+        requireAllNonNull(target, editedOutlet);
+
+        addressBook.setOutlet(target, editedOutlet);
+    }
+
     //=========== Filtered Person List Accessors =============================================================
 
     /**
@@ -145,6 +172,29 @@ public class ModelManager implements Model {
         filteredPersons.setPredicate(PREDICATE_SHOW_ALL_PERSONS);
     }
 
+    @Override
+    public ObservableList<Outlet> getFilteredOutletList() {
+        return filteredOutlets;
+    }
+
+    @Override
+    public void updateFilteredOutletList(Predicate<Outlet> predicate) {
+        requireNonNull(predicate);
+
+        Predicate<? super Outlet> currentPredicate = filteredOutlets.getPredicate();
+
+        if (currentPredicate == null) {
+            filteredOutlets.setPredicate(predicate);
+        } else {
+            filteredOutlets.setPredicate(predicate.and(currentPredicate));
+        }
+    }
+
+    @Override
+    public void resetFilteredOutletList() {
+        filteredOutlets.setPredicate(PREDICATE_SHOW_ALL_OUTLETS);
+    }
+
     //=========== TagCounter Accessors =============================================================
     @Override
     public String getTagCounterDescription() {
@@ -165,7 +215,8 @@ public class ModelManager implements Model {
         ModelManager otherModelManager = (ModelManager) other;
         return addressBook.equals(otherModelManager.addressBook)
                 && userPrefs.equals(otherModelManager.userPrefs)
-                && filteredPersons.equals(otherModelManager.filteredPersons);
+                && filteredPersons.equals(otherModelManager.filteredPersons)
+                && filteredOutlets.equals(otherModelManager.filteredOutlets);
     }
 
 }
