@@ -3,19 +3,23 @@ package seedu.address.model;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.outlet.Outlet;
+import seedu.address.model.outlet.UniqueOutletList;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
 
 /**
  * Wraps all data at the address-book level
- * Duplicates are not allowed (by .isSamePerson comparison)
+ * Duplicates are not allowed for persons and outlets.
  */
 public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons;
+    private final UniqueOutletList outlets;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -26,6 +30,7 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     {
         persons = new UniquePersonList();
+        outlets = new UniqueOutletList();
     }
 
     public AddressBook() {}
@@ -55,6 +60,15 @@ public class AddressBook implements ReadOnlyAddressBook {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
+        setOutlets(newData.getOutletList());
+    }
+
+    /**
+     * Replaces the contents of the outlet list with {@code outlets}.
+     * {@code outlets} must not contain duplicate outlets.
+     */
+    public void setOutlets(List<Outlet> outlets) {
+        this.outlets.setOutlets(outlets);
     }
 
     //// person-level operations
@@ -94,18 +108,62 @@ public class AddressBook implements ReadOnlyAddressBook {
         persons.remove(key);
     }
 
+    //// outlet-level operations
+
+    /**
+     * Returns true if an outlet with the same identity as {@code outlet} exists in the address book.
+     */
+    public boolean hasOutlet(Outlet outlet) {
+        requireNonNull(outlet);
+        return outlets.contains(outlet);
+    }
+
+    /**
+     * Adds an outlet to the address book.
+     * The outlet must not already exist in the address book.
+     */
+    public void addOutlet(Outlet outlet) {
+        outlets.add(outlet);
+    }
+
+    /**
+     * Replaces the given outlet {@code target} in the list with {@code editedOutlet}.
+     * {@code target} must exist in the address book.
+     * The outlet identity of {@code editedOutlet} must not be the same as another existing outlet in the address
+     * book.
+     */
+    public void setOutlet(Outlet target, Outlet editedOutlet) {
+        requireNonNull(editedOutlet);
+
+        outlets.setOutlet(target, editedOutlet);
+    }
+
+    /**
+     * Removes {@code outlet} from this {@code AddressBook}.
+     * {@code outlet} must exist in the address book.
+     */
+    public void removeOutlet(Outlet outlet) {
+        outlets.remove(outlet);
+    }
+
     //// util methods
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("persons", persons)
+                .add("outlets", outlets)
                 .toString();
     }
 
     @Override
     public ObservableList<Person> getPersonList() {
         return persons.asUnmodifiableObservableList();
+    }
+
+    @Override
+    public ObservableList<Outlet> getOutletList() {
+        return outlets.asUnmodifiableObservableList();
     }
 
     @Override
@@ -120,11 +178,11 @@ public class AddressBook implements ReadOnlyAddressBook {
         }
 
         AddressBook otherAddressBook = (AddressBook) other;
-        return persons.equals(otherAddressBook.persons);
+        return persons.equals(otherAddressBook.persons) && outlets.equals(otherAddressBook.outlets);
     }
 
     @Override
     public int hashCode() {
-        return persons.hashCode();
+        return Objects.hash(persons, outlets);
     }
 }

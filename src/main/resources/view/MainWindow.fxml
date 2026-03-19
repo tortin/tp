@@ -17,7 +17,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.control.ScrollPane?>
 
 <fx:root type="javafx.stage.Stage" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
          title="HireLens" minWidth="900" minHeight="200" onCloseRequest="#handleExit">
@@ -85,12 +84,22 @@
           </VBox>
           <StackPane fx:id="statusbarPlaceholder" VBox.vgrow="NEVER" />
         </VBox>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="tag-scroll-pane"
-                    HBox.hgrow="ALWAYS" minWidth="350" prefWidth="350" maxWidth="350">
-          <content>
-            <VBox fx:id="rightDisplayPlaceHolder" ></VBox>
-          </content>
-        </ScrollPane>
+        <VBox fx:id="rightDisplayPlaceHolder" HBox.hgrow="ALWAYS" minWidth="350" prefWidth="350" maxWidth="350"
+              styleClass="pane-with-border">
+          <StackPane fx:id="detailedPersonPlaceholder" VBox.vgrow="ALWAYS" styleClass="pane-with-border">
+            <Label text="Select a candidate to view details" styleClass="small_index_label" />
+          </StackPane>
+
+          <VBox VBox.vgrow="NEVER" minHeight="235" prefHeight="235" maxHeight="235"
+                styleClass="pane-with-border">
+            <Label text="OUTLETS" styleClass="small_index_label" style="-fx-padding: 8 10 4 10;" />
+            <StackPane fx:id="outletListPanelPlaceholder" VBox.vgrow="ALWAYS">
+              <padding>
+                <Insets top="0" right="8" bottom="8" left="8" />
+              </padding>
+            </StackPane>
+          </VBox>
+        </VBox>
       </HBox>
     </Scene>
   </scene>

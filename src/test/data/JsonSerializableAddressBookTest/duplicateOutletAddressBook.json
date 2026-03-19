@@ -1,0 +1,15 @@
+{
+  "persons": [],
+  "outlets": [
+    {
+      "name": "TechCo",
+      "address": "Raffles Place",
+      "postalCode": "048623"
+    },
+    {
+      "name": "TechCo Branch",
+      "address": "Raffles Place",
+      "postalCode": "048623"
+    }
+  ]
+}

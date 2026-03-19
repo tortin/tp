@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.outlet.Outlet;
 import seedu.address.model.person.Person;
 
 /**
@@ -20,15 +21,23 @@ import seedu.address.model.person.Person;
 class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
+    public static final String MESSAGE_DUPLICATE_OUTLET = "Outlets list contains duplicate outlet(s).";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedOutlet> outlets = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonSerializableAddressBook} with the given persons.
      */
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
-        this.persons.addAll(persons);
+    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+            @JsonProperty("outlets") List<JsonAdaptedOutlet> outlets) {
+        if (persons != null) {
+            this.persons.addAll(persons);
+        }
+        if (outlets != null) {
+            this.outlets.addAll(outlets);
+        }
     }
 
     /**
@@ -38,6 +47,7 @@ class JsonSerializableAddressBook {
      */
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
         persons.addAll(source.getPersonList().stream().map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+        outlets.addAll(source.getOutletList().stream().map(JsonAdaptedOutlet::new).collect(Collectors.toList()));
     }
 
     /**
@@ -53,6 +63,13 @@ class JsonSerializableAddressBook {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
             }
             addressBook.addPerson(person);
+        }
+        for (JsonAdaptedOutlet jsonAdaptedOutlet : outlets) {
+            Outlet outlet = jsonAdaptedOutlet.toModelType();
+            if (addressBook.hasOutlet(outlet)) {
+                throw new IllegalValueException(MESSAGE_DUPLICATE_OUTLET);
+            }
+            addressBook.addOutlet(outlet);
         }
         return addressBook;
     }
