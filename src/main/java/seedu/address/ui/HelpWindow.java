@@ -1,9 +1,6 @@
 package seedu.address.ui;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -51,10 +48,9 @@ public class HelpWindow extends UiPart<Stage> {
      */
     public HelpWindow(Stage root) {
         super(FXML, root);
-        helpMessage.setText(loadGuideSection());
+        helpMessage.setText(loadUserGuide());
         helpMessage.setWrapText(true);
         helpMessage.setEditable(false);
-        //helpMessage.setStyle("-fx-font-family: monospace; -fx-font-size: 13px;");
     }
 
     /**
@@ -114,7 +110,14 @@ public class HelpWindow extends UiPart<Stage> {
      * extracts the section from START_HEADING to END_HEADING (or EOF),
      * and strips Markdown formatting to return plain text.
      */
-    private String loadGuideSection() {
+
+    /** Reads UserGuide.md from the relative path USERGUIDE_PATH,
+     * runs extractUserGuide to extract UserGuide from START_HEADING to END_HEADING
+     * @return
+     */
+
+    /*
+    private String loadUserGuide() {
         try {
             InputStream is = new FileInputStream(USERGUIDE_PATH);
 
@@ -152,6 +155,81 @@ public class HelpWindow extends UiPart<Stage> {
             return "Could not load user guide.\nVisit: " + USERGUIDE_URL;
         }
     }
+    */
+
+
+    private String loadUserGuide() {
+        try {
+
+            FileInputStream userGuideInput = new FileInputStream(USERGUIDE_PATH);
+            InputStreamReader inputStreamReader = new InputStreamReader(userGuideInput);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+
+            try {
+                return extractUserGuide(reader, START_HEADING, END_HEADING);
+            } finally {
+                reader.close();
+            }
+
+        } catch (Exception e) {
+            logger.warning("Failed to load UserGuide.md from path " + USERGUIDE_PATH +
+                    e.getMessage());
+            return "Failed to load local user-guide. \n Visit: " + USERGUIDE_URL +
+                    "instead";
+        }
+
+    }
+
+    // ExtractUserGuide is a helper method used to contain the file reading logic for easier testing
+    private String extractUserGuide(BufferedReader reader, String startString, String endString) throws IOException {
+        ArrayList<String> lines = new ArrayList<>();
+        String line = reader.readLine();
+
+        // Consumes all lines in the UserGuide
+        while (line != null) {
+            lines.add(line);
+            line = reader.readLine();
+        }
+
+        // Checks for a match to the start heading or string to determine the i-th line to start at
+        int startingLine = -1; // Forces an exception if the startString cannot be found
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).startsWith(startString)) {
+                startingLine = i;
+                break;
+            }
+        }
+        if (startingLine == -1) {
+            throw new IOException("startString not found: " + startString);
+        }
+
+        // Checks for a match to the end string to determine where to stop, otherwise just reach end of file
+        int endingLine = lines.size();
+        for (int i = startingLine + 1; endString != null && i < lines.size(); i++) {
+            if (!lines.get(i).startsWith(endString)) {
+                continue;
+            }
+            endingLine = i;
+            break;
+        }
+
+        // Takes the ArrayList of lines starting from startingLine, builds them into a string for
+        // loadUserGuide to pass to HelpWindow
+
+        StringBuilder result = new StringBuilder();
+        for (int i = startingLine; i< endingLine; i++) {
+            result.append(lines.get(i));
+            result.append("\n");
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length()-1);
+        }
+
+        return result.toString();
+
+    }
+
+
 
 
     /**
