@@ -82,7 +82,11 @@ A person can have any number of tags (including 0)
 
 Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/12345678 t/criminal`
+
+### Adding persons by csv file: `addcsv`
+
+Format: `addcsv path/to/csv/from/root.csv`
 
 ### Listing all persons : `list`
 
@@ -94,7 +98,7 @@ Format: `list`
 
 Edits an existing person in the address book.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
+Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [pc/POSTAL_CODE] [t/TAG]…​`
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
 * At least one of the optional fields must be provided.
@@ -174,6 +178,33 @@ Exits the program.
 
 Format: `exit`
 
+### Adding Outlets : `outlet add`
+
+Adds an `Outlet`.
+
+Format: `outlet add n/<name> a/<address> pc/<postalCode>`
+
+Examples:
+
+- `outlet add n/FinServ a/Marina Bay pc/018956`
+- `outlet add n/TechCo a/Raffles Place pc/048623`
+
+### Deleting Outlets : `outlet delete`
+
+Deletes an `Outlet`.
+
+Format: `outlet delete <index>`
+
+Examples:
+
+- `outlet delete 1`
+
+### Listing Outlets : `outlet list`
+
+Lists all outlets.
+
+Format: `outlet list`
+
 ### Saving the data
 
 AddressBook data are saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
@@ -211,10 +242,16 @@ _Details coming soon ......_
 
 Action | Format, Examples
 --------|------------------
-**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd pc/123456 t/friend t/colleague`
 **Clear** | `clear`
 **Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [pc/POSTAL_CODE] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find** | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Filter** | `filter`<br> e.g., `filter t/java t/python`
 **List** | `list`
 **Help** | `help`
+**List Tags** | `listtags`
+**Add by csv** | `addcsv`
+**Add Outlet** | `outlet add n/<name> a/<address> pc/<postalCode>` <br> e.g., `outlet add n/FinServ a/Marina Bay pc/018956`
+**Delete Outlet** | `outlet delete <index>` <br> e.g., `outlet delete 1`
+**List Outlets** | `outlet list`
