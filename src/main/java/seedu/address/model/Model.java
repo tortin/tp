@@ -93,6 +93,14 @@ public interface Model {
     void resetFilteredPersonList();
 
     /**
+     * Retrives and sets the filter.
+     */
+
+    Predicate<? super Person> getFilteredPersonPredicate();
+
+    void setFilteredPersonPredicate(Predicate<? super Person> predicate);
+
+    /**
      * Returns a list of the tags in the model, along with their frequencies in descending order.
      */
     String getTagCounterDescription();

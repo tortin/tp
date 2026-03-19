@@ -150,6 +150,14 @@ public class ModelManager implements Model {
         filteredPersons.setPredicate(PREDICATE_SHOW_ALL_PERSONS);
     }
 
+    @Override
+    public Predicate<? super Person> getFilteredPersonPredicate() { return filteredPersons.getPredicate(); }
+
+    @Override
+    public void setFilteredPersonPredicate(Predicate<? super Person> predicate) {
+        filteredPersons.setPredicate(predicate);
+    }
+
     //=========== TagCounter Accessors =============================================================
     @Override
     public String getTagCounterDescription() {
