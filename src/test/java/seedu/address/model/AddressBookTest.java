@@ -18,17 +18,32 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.model.outlet.Outlet;
+import seedu.address.model.outlet.OutletAddress;
+import seedu.address.model.outlet.OutletName;
+import seedu.address.model.outlet.OutletPostalCode;
+import seedu.address.model.outlet.exceptions.DuplicateOutletException;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddressBookTest {
 
+    private static final Outlet OUTLET_ALPHA = new Outlet(
+            new OutletName("TechCo"),
+            new OutletAddress("Raffles Place"),
+            new OutletPostalCode("048623"));
+    private static final Outlet OUTLET_ALPHA_EDITED = new Outlet(
+            new OutletName("TechCo Branch"),
+            new OutletAddress("Raffles Place"),
+            new OutletPostalCode("048623"));
+
     private final AddressBook addressBook = new AddressBook();
 
     @Test
     public void constructor() {
         assertEquals(Collections.emptyList(), addressBook.getPersonList());
+        assertEquals(Collections.emptyList(), addressBook.getOutletList());
     }
 
     @Test
@@ -52,6 +67,14 @@ public class AddressBookTest {
         AddressBookStub newData = new AddressBookStub(newPersons);
 
         assertThrows(DuplicatePersonException.class, () -> addressBook.resetData(newData));
+    }
+
+    @Test
+    public void resetData_withDuplicateOutlets_throwsDuplicateOutletException() {
+        List<Outlet> newOutlets = Arrays.asList(OUTLET_ALPHA, OUTLET_ALPHA_EDITED);
+        AddressBookStub newData = new AddressBookStub(Collections.emptyList(), newOutlets);
+
+        assertThrows(DuplicateOutletException.class, () -> addressBook.resetData(newData));
     }
 
     @Test
@@ -79,13 +102,41 @@ public class AddressBookTest {
     }
 
     @Test
+    public void hasOutlet_nullOutlet_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> addressBook.hasOutlet(null));
+    }
+
+    @Test
+    public void hasOutlet_outletNotInAddressBook_returnsFalse() {
+        assertFalse(addressBook.hasOutlet(OUTLET_ALPHA));
+    }
+
+    @Test
+    public void hasOutlet_outletInAddressBook_returnsTrue() {
+        addressBook.addOutlet(OUTLET_ALPHA);
+        assertTrue(addressBook.hasOutlet(OUTLET_ALPHA));
+    }
+
+    @Test
+    public void hasOutlet_outletWithSameIdentityFieldsInAddressBook_returnsTrue() {
+        addressBook.addOutlet(OUTLET_ALPHA);
+        assertTrue(addressBook.hasOutlet(OUTLET_ALPHA_EDITED));
+    }
+
+    @Test
     public void getPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> addressBook.getPersonList().remove(0));
     }
 
     @Test
+    public void getOutletList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> addressBook.getOutletList().remove(0));
+    }
+
+    @Test
     public void toStringMethod() {
-        String expected = AddressBook.class.getCanonicalName() + "{persons=" + addressBook.getPersonList() + "}";
+        String expected = AddressBook.class.getCanonicalName() + "{persons=" + addressBook.getPersonList()
+                + ", outlets=" + addressBook.getOutletList() + "}";
         assertEquals(expected, addressBook.toString());
     }
 
@@ -94,14 +145,25 @@ public class AddressBookTest {
      */
     private static class AddressBookStub implements ReadOnlyAddressBook {
         private final ObservableList<Person> persons = FXCollections.observableArrayList();
+        private final ObservableList<Outlet> outlets = FXCollections.observableArrayList();
 
         AddressBookStub(Collection<Person> persons) {
+            this(persons, Collections.emptyList());
+        }
+
+        AddressBookStub(Collection<Person> persons, Collection<Outlet> outlets) {
             this.persons.setAll(persons);
+            this.outlets.setAll(outlets);
         }
 
         @Override
         public ObservableList<Person> getPersonList() {
             return persons;
+        }
+
+        @Override
+        public ObservableList<Outlet> getOutletList() {
+            return outlets;
         }
     }
 

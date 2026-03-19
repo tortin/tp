@@ -15,12 +15,25 @@ import java.util.LinkedHashMap;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.outlet.Outlet;
+import seedu.address.model.outlet.OutletAddress;
+import seedu.address.model.outlet.OutletName;
+import seedu.address.model.outlet.OutletPostalCode;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.TagCounter;
 import seedu.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
+
+    private static final Outlet OUTLET_ALPHA = new Outlet(
+            new OutletName("TechCo"),
+            new OutletAddress("Raffles Place"),
+            new OutletPostalCode("048623"));
+    private static final Outlet OUTLET_BETA = new Outlet(
+            new OutletName("FinServ"),
+            new OutletAddress("Marina Bay"),
+            new OutletPostalCode("018956"));
 
     private ModelManager modelManager = new ModelManager();
 
@@ -91,8 +104,40 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void hasOutlet_nullOutlet_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasOutlet(null));
+    }
+
+    @Test
+    public void hasOutlet_outletNotInAddressBook_returnsFalse() {
+        assertFalse(modelManager.hasOutlet(OUTLET_ALPHA));
+    }
+
+    @Test
+    public void hasOutlet_outletInAddressBook_returnsTrue() {
+        modelManager.addOutlet(OUTLET_ALPHA);
+        assertTrue(modelManager.hasOutlet(OUTLET_ALPHA));
+    }
+
+    @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void getFilteredOutletList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredOutletList().remove(0));
+    }
+
+    @Test
+    public void resetFilteredOutletList_resetsToShowAllOutlets() {
+        modelManager.addOutlet(OUTLET_ALPHA);
+        modelManager.addOutlet(OUTLET_BETA);
+        modelManager.updateFilteredOutletList(outlet -> outlet.equals(OUTLET_ALPHA));
+        assertEquals(1, modelManager.getFilteredOutletList().size());
+
+        modelManager.resetFilteredOutletList();
+        assertEquals(2, modelManager.getFilteredOutletList().size());
     }
 
     @Test
@@ -126,10 +171,19 @@ public class ModelManagerTest {
         // resets modelManager to initial state for upcoming tests
         modelManager.resetFilteredPersonList();
 
+        AddressBook outletAddressBook = new AddressBookBuilder().withPerson(ALICE).withPerson(BENSON).build();
+        outletAddressBook.addOutlet(OUTLET_ALPHA);
+        outletAddressBook.addOutlet(OUTLET_BETA);
+        modelManager = new ModelManager(outletAddressBook, userPrefs);
+        modelManager.updateFilteredOutletList(outlet -> outlet.equals(OUTLET_ALPHA));
+
+        // different filtered outlet list -> returns false
+        assertFalse(modelManager.equals(new ModelManager(outletAddressBook, userPrefs)));
+
         // different userPrefs -> returns false
         UserPrefs differentUserPrefs = new UserPrefs();
         differentUserPrefs.setAddressBookFilePath(Paths.get("differentFilePath"));
-        assertFalse(modelManager.equals(new ModelManager(addressBook, differentUserPrefs)));
+        assertFalse(modelManager.equals(new ModelManager(outletAddressBook, differentUserPrefs)));
     }
 
     @Test

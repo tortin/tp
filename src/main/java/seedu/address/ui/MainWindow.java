@@ -45,6 +45,12 @@ public class MainWindow extends UiPart<Stage> {
     private StackPane statusbarPlaceholder;
 
     @FXML
+    private StackPane detailedPersonPlaceholder;
+
+    @FXML
+    private StackPane outletListPanelPlaceholder;
+
+    @FXML
     private VBox rightDisplayPlaceHolder;
 
     /**
@@ -73,9 +79,11 @@ public class MainWindow extends UiPart<Stage> {
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
-        personListPanel.setOnPersonSelected((person, index) -> {
-            DetailedPersonCard card = new DetailedPersonCard(person, index);
-            rightDisplayPlaceHolder.getChildren().setAll(card.getRoot());
+        OutletListPanel outletListPanel = new OutletListPanel(logic.getFilteredOutletList());
+        outletListPanelPlaceholder.getChildren().add(outletListPanel.getRoot());
+        personListPanel.setOnPersonSelected((person, header) -> {
+            DetailedPersonCard card = new DetailedPersonCard(person, header);
+            detailedPersonPlaceholder.getChildren().setAll(card.getRoot());
         });
 
         resultDisplay = new ResultDisplay();
@@ -110,6 +118,14 @@ public class MainWindow extends UiPart<Stage> {
         } else {
             helpWindow.focus();
         }
+    }
+
+    /**
+     * Displays the selected person on the right as a {@Code DetailedPersonCard}.
+     */
+    public void showPersonDetails(Person person, int displayedIndex) {
+        DetailedPersonCard detailedCard = new DetailedPersonCard(person, "Candidate #" + displayedIndex);
+        detailedPersonPlaceholder.getChildren().setAll(detailedCard.getRoot());
     }
 
     /**

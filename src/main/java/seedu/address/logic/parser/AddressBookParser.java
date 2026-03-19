@@ -90,6 +90,9 @@ public class AddressBookParser {
         case ListTagsCommand.COMMAND_WORD:
             return new ListTagsCommand();
 
+        case OutletCommandParser.COMMAND_WORD:
+            return new OutletCommandParser().parse(arguments);
+
         case UndoCommand.COMMAND_WORD:
             return new UndoCommand();
 
