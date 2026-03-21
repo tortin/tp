@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 
 public class TagComboTest {
 
-    Set<Tag> firstTagSet = Set.of(new Tag("python"), new Tag("java"));
-    Set<Tag> secondTagSet = Set.of(new Tag("python"), new Tag("java"));
-    Set<Tag> thirdTagSet = Set.of(new Tag("python"), new Tag("java"), new Tag("C"));
+    private final Set<Tag> firstTagSet = Set.of(new Tag("python"), new Tag("java"));
+    private final Set<Tag> secondTagSet = Set.of(new Tag("python"), new Tag("java"));
+    private final Set<Tag> thirdTagSet = Set.of(new Tag("python"), new Tag("java"), new Tag("C"));
 
-    TagCombo firstTagCombo = new TagCombo("one", firstTagSet);
-    TagCombo secondTagCombo = new TagCombo("two", secondTagSet);
-    TagCombo thirdTagCombo = new TagCombo("three", thirdTagSet);
+    private final TagCombo firstTagCombo = new TagCombo("one", firstTagSet);
+    private final TagCombo secondTagCombo = new TagCombo("two", secondTagSet);
+    private final TagCombo thirdTagCombo = new TagCombo("three", thirdTagSet);
 
     @Test
     public void equals() {
@@ -34,7 +34,7 @@ public class TagComboTest {
 
     @Test
     public void isSameTagCombo_differentTagSetDifferentName_returnFalse() {
-        assertFalse(firstTagCombo.isSameTagCombo(secondTagCombo));
+        assertFalse(firstTagCombo.isSameTagCombo(thirdTagCombo));
     }
 
     @Test

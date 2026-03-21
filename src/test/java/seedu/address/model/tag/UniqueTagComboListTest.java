@@ -45,9 +45,9 @@ public class UniqueTagComboListTest {
     }
 
     @Test
-    public void contains_tagComboWithSameTagSetDifferentName_returnsTrue() {
+    public void isSameTagCombo_tagComboWithSameTagSetDifferentName_returnsTrue() {
         uniqueTagComboList.add(TAG_COMBO_ONE);
-        assertFalse(uniqueTagComboList.contains(TAG_COMBO_THREE));
+        assertTrue(uniqueTagComboList.contains(TAG_COMBO_THREE));
     }
 
     @Test
@@ -111,8 +111,8 @@ public class UniqueTagComboListTest {
     @Test
     public void setTagCombos_listWithDuplicateTagCombos_throwsDuplicateTagComboException() {
         List<TagCombo> listWithDuplicateTagCombos = Arrays.asList(TAG_COMBO_ONE, TAG_COMBO_ONE);
-        assertThrows(DuplicateTagComboException.class,
-                () -> uniqueTagComboList.setTagCombos(listWithDuplicateTagCombos));
+        assertThrows(DuplicateTagComboException.class, () -> uniqueTagComboList
+                .setTagCombos(listWithDuplicateTagCombos));
     }
 
     @Test
