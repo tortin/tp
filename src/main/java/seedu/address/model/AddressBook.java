@@ -65,6 +65,7 @@ public class AddressBook implements ReadOnlyAddressBook {
 
         setPersons(newData.getPersonList());
         setOutlets(newData.getOutletList());
+        setTagCombos(newData.getTagComboList());
     }
 
     /**
@@ -171,6 +172,10 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public boolean hasTagCombo(TagCombo tagCombo) {
         return tagCombos.contains(tagCombo);
+    }
+
+    public void setTagCombos(List<TagCombo> tagCombos) {
+        this.tagCombos.setTagCombos(tagCombos);
     }
 
     //// util methods

@@ -22,13 +22,13 @@ public class TagCombo {
     }
 
     /**
-     * Returns true if 2 {@code TagCombo}s have the same tagSets.
+     * Returns true if 2 {@code TagCombo}s have the same tagSets or the same name.
      */
     public boolean isSameTagCombo(TagCombo otherTagCombo) {
         if (otherTagCombo == this) {
             return true;
         }
-        return this.tagSet.equals(otherTagCombo.tagSet);
+        return this.tagSet.equals(otherTagCombo.tagSet) || this.name.equals(otherTagCombo.name);
     }
 
     public TagComboName getName() {

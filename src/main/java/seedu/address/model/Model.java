@@ -128,7 +128,25 @@ public interface Model {
      * The outlet identity of {@code editedOutlet} must not be the same as another existing outlet in the address
      * book.
      */
+
     void setOutlet(Outlet target, Outlet editedOutlet);
+
+    /**
+     * Returns true if a {@code TagCombo} with the same identity as tagCombo exists in the {@code AddressBook}.
+     */
+    boolean hasTagCombo(TagCombo tagCombo);
+
+    /**
+     * Deletes the given {@code TagCombo}.
+     * The {@code TagCombo} must exist in the {@code AddressBook}.
+     */
+    void deleteTagCombo(TagCombo target);
+
+    /**
+     * Adds the given {@code TagCombo}.
+     * The given {@code TagCombo} must not already exist in the {@code AddressBook}.
+     */
+    void addTagCombo(TagCombo tagCombo);
 
     /** Returns an unmodifiable view of the filtered outlet list */
     ObservableList<Outlet> getFilteredOutletList();

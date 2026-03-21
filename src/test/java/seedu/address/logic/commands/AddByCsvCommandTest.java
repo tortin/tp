@@ -249,6 +249,21 @@ public class AddByCsvCommandTest {
         public ObservableList<TagCombo> getTagComboList() {
             throw new AssertionError("This method should not be called.");
         }
+
+        @Override
+        public boolean hasTagCombo(TagCombo tagCombo) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void deleteTagCombo(TagCombo target) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
+        public void addTagCombo(TagCombo tagCombo) {
+            throw new AssertionError("This method should not be called.");
+        }
     }
 
     /**

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalPersons.ALICE;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
@@ -24,69 +22,72 @@ import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.ReadOnlyUserPrefs;
 import seedu.address.model.outlet.Outlet;
 import seedu.address.model.person.Person;
-import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.tag.TagCombo;
 import seedu.address.model.tag.TagCounter;
-import seedu.address.testutil.PersonBuilder;
+import seedu.address.model.tag.exceptions.DuplicateTagComboException;
+import seedu.address.testutil.TagComboBuilder;
 
-public class AddCommandTest {
+public class AddTagComboCommandTest {
+
+    private Model model;
 
     @Test
-    public void constructor_nullPerson_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> new AddCommand(null));
+    public void constructor_nullTagCombo_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> new AddTagComboCommand(null));
     }
 
     @Test
-    public void execute_personAcceptedByModel_addSuccessful() throws Exception {
-        ModelStubAcceptingPersonAdded modelStub = new ModelStubAcceptingPersonAdded();
-        Person validPerson = new PersonBuilder().build();
+    public void execute_tagComboAcceptedByModel_addSuccessful() throws Exception {
+        ModelStubAcceptingTagComboAdded modelStub = new ModelStubAcceptingTagComboAdded();
+        TagCombo validTagCombo = new TagComboBuilder().build();
 
-        CommandResult commandResult = new AddCommand(validPerson).execute(modelStub);
+        CommandResult commandResult = new AddTagComboCommand(validTagCombo).execute(modelStub);
 
-        assertEquals(String.format(AddCommand.MESSAGE_SUCCESS, Messages.format(validPerson)),
+        assertEquals(String.format(AddTagComboCommand.MESSAGE_SUCCESS, validTagCombo),
                 commandResult.getFeedbackToUser());
-        assertEquals(Arrays.asList(validPerson), modelStub.personsAdded);
+        assertEquals(Arrays.asList(validTagCombo), modelStub.tagCombosAdded);
     }
 
     @Test
-    public void execute_duplicatePerson_throwsCommandException() {
-        Person validPerson = new PersonBuilder().build();
-        AddCommand addCommand = new AddCommand(validPerson);
-        ModelStub modelStub = new ModelStubWithPerson(validPerson);
+    public void execute_duplicateTagCombo_throwsCommandException() {
+        TagCombo validTagCombo = new TagComboBuilder().build();
+        AddTagComboCommand addTagComboCommand = new AddTagComboCommand(validTagCombo);
+        ModelStub modelStub = new ModelStubWithTagCombo(validTagCombo);
 
         assertThrows(CommandException.class,
-                AddCommand.MESSAGE_DUPLICATE_EMAIL_AND_PHONE, () -> addCommand.execute(modelStub));
+                AddTagComboCommand.MESSAGE_DUPLICATE_TAG_COMBO, () -> addTagComboCommand.execute(modelStub));
     }
 
     @Test
     public void equals() {
-        Person alice = new PersonBuilder().withName("Alice").build();
-        Person bob = new PersonBuilder().withName("Bob").build();
-        AddCommand addAliceCommand = new AddCommand(alice);
-        AddCommand addBobCommand = new AddCommand(bob);
+        TagCombo mlDev = new TagComboBuilder().withName("ml dev").build();
+        TagCombo pythonDev = new TagComboBuilder().withName("python dev").build();
+        AddTagComboCommand addmlDevCommand = new AddTagComboCommand(mlDev);
+        AddTagComboCommand addpythonDevCommand = new AddTagComboCommand(pythonDev);
 
         // same object -> returns true
-        assertTrue(addAliceCommand.equals(addAliceCommand));
+        assertTrue(addmlDevCommand.equals(addmlDevCommand));
 
         // same values -> returns true
-        AddCommand addAliceCommandCopy = new AddCommand(alice);
-        assertTrue(addAliceCommand.equals(addAliceCommandCopy));
+        AddTagComboCommand addmlDevCommandCopy = new AddTagComboCommand(mlDev);
+        assertTrue(addmlDevCommand.equals(addmlDevCommandCopy));
 
         // different types -> returns false
-        assertFalse(addAliceCommand.equals(1));
+        assertFalse(addmlDevCommand.equals(1));
 
         // null -> returns false
-        assertFalse(addAliceCommand.equals(null));
+        assertFalse(addmlDevCommand.equals(null));
 
         // different person -> returns false
-        assertFalse(addAliceCommand.equals(addBobCommand));
+        assertFalse(addmlDevCommand.equals(addpythonDevCommand));
     }
 
     @Test
     public void toStringMethod() {
-        AddCommand addCommand = new AddCommand(ALICE);
-        String expected = AddCommand.class.getCanonicalName() + "{toAdd=" + ALICE + "}";
-        assertEquals(expected, addCommand.toString());
+        TagCombo mlDev = new TagComboBuilder().withName("ml dev").build();
+        AddTagComboCommand addmlDevCommand = new AddTagComboCommand(mlDev);
+        String expected = AddTagComboCommand.class.getCanonicalName() + "{toAdd=" + mlDev + "}";
+        assertEquals(expected, addmlDevCommand.toString());
     }
 
     /**
@@ -250,49 +251,49 @@ public class AddCommandTest {
     }
 
     /**
-     * A Model stub that contains a single person.
+     * A Model stub that contains a single TagCombo.
      */
-    private class ModelStubWithPerson extends ModelStub {
-        private final Person person;
+    private class ModelStubWithTagCombo extends ModelStub {
+        private final TagCombo tagCombo;
 
-        ModelStubWithPerson(Person person) {
-            requireNonNull(person);
-            this.person = person;
+        ModelStubWithTagCombo(TagCombo tagCombo) {
+            requireNonNull(tagCombo);
+            this.tagCombo = tagCombo;
         }
 
         @Override
-        public boolean hasPerson(Person person) {
-            requireNonNull(person);
-            return this.person.isSamePerson(person);
+        public boolean hasTagCombo(TagCombo tagCombo) {
+            requireNonNull(tagCombo);
+            return this.tagCombo.isSameTagCombo(tagCombo);
         }
 
         @Override
-        public void addPerson(Person person) {
-            requireNonNull(person);
-            if (this.person.isSamePerson(person)) {
-                throw new DuplicatePersonException(
-                        "A person with this phone number and email address is already in the address book."
+        public void addTagCombo(TagCombo tagCombo) {
+            requireNonNull(tagCombo);
+            if (this.tagCombo.isSameTagCombo(tagCombo)) {
+                throw new DuplicateTagComboException(
+                        "A Tag Combo with this name or tag set is already in the address book."
                 );
             }
         }
     }
 
     /**
-     * A Model stub that always accept the person being added.
+     * A Model stub that always accept the TagCombo being added.
      */
-    private class ModelStubAcceptingPersonAdded extends ModelStub {
-        final ArrayList<Person> personsAdded = new ArrayList<>();
+    private class ModelStubAcceptingTagComboAdded extends ModelStub {
+        final ArrayList<TagCombo> tagCombosAdded = new ArrayList<TagCombo>();
 
         @Override
-        public boolean hasPerson(Person person) {
-            requireNonNull(person);
-            return personsAdded.stream().anyMatch(person::isSamePerson);
+        public boolean hasTagCombo(TagCombo tagCombo) {
+            requireNonNull(tagCombo);
+            return tagCombosAdded.stream().anyMatch(tagCombo::isSameTagCombo);
         }
 
         @Override
-        public void addPerson(Person person) {
-            requireNonNull(person);
-            personsAdded.add(person);
+        public void addTagCombo(TagCombo tagCombo) {
+            requireNonNull(tagCombo);
+            tagCombosAdded.add(tagCombo);
         }
 
         @Override

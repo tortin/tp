@@ -145,6 +145,21 @@ public class ModelManager implements Model {
         addressBook.setOutlet(target, editedOutlet);
     }
 
+    @Override
+    public boolean hasTagCombo(TagCombo tagCombo) {
+        return addressBook.hasTagCombo(tagCombo);
+    }
+
+    @Override
+    public void deleteTagCombo(TagCombo target) {
+        addressBook.removeTagCombo(target);
+    }
+
+    @Override
+    public void addTagCombo(TagCombo tagCombo) {
+        addressBook.addTagCombo(tagCombo);
+    }
+
     //=========== Filtered Person List Accessors =============================================================
 
     /**

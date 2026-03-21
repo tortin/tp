@@ -49,6 +49,7 @@ public class CommandTestUtil {
     public static final String VALID_OUTLET_ADDRESS_BETA = "Marina Bay";
     public static final String VALID_OUTLET_POSTAL_CODE_ALPHA = "048623";
     public static final String VALID_OUTLET_POSTAL_CODE_BETA = "018956";
+    public static final String VALID_TAG_COMBO_NAME = "ml dev";
 
     public static final String NAME_DESC_AMY = " " + PREFIX_NAME + VALID_NAME_AMY;
     public static final String NAME_DESC_BOB = " " + PREFIX_NAME + VALID_NAME_BOB;

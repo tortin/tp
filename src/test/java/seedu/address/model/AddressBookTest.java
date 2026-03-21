@@ -29,6 +29,8 @@ import seedu.address.model.person.exceptions.DuplicatePersonException;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.TagCombo;
 import seedu.address.model.tag.TagComboName;
+import seedu.address.model.tag.UniqueTagComboList;
+import seedu.address.model.tag.exceptions.DuplicateTagComboException;
 import seedu.address.testutil.PersonBuilder;
 
 public class AddressBookTest {
@@ -43,6 +45,9 @@ public class AddressBookTest {
             new OutletPostalCode("048623"));
     private static final TagCombo TAG_COMBO_ONE = new TagCombo(new TagComboName("developer"), Set.of(
             new Tag("python"), new Tag("java")
+    ));
+    private static final TagCombo TAG_COMBO_TWO = new TagCombo(new TagComboName("developer"), Set.of(
+            new Tag("python"), new Tag("java"), new Tag("C")
     ));
 
     private final AddressBook addressBook = new AddressBook();
@@ -82,6 +87,14 @@ public class AddressBookTest {
         AddressBookStub newData = new AddressBookStub(Collections.emptyList(), newOutlets, Collections.emptySet());
 
         assertThrows(DuplicateOutletException.class, () -> addressBook.resetData(newData));
+    }
+
+    @Test
+    public void resetData_withDuplicateTagCombos_throwsDuplicateTagComboException() {
+        List<TagCombo> newTagCombos = Arrays.asList(TAG_COMBO_ONE, TAG_COMBO_TWO);
+        AddressBookStub newData = new AddressBookStub(Collections.emptyList(), Collections.emptySet(), newTagCombos);
+
+        assertThrows(DuplicateTagComboException.class, () -> addressBook.resetData(newData));
     }
 
     @Test
@@ -141,9 +154,21 @@ public class AddressBookTest {
     }
 
     @Test
+    public void hasTagCombo_tagComboNotInAddressBook_returnsFalse() {
+        assertFalse(addressBook.hasTagCombo(TAG_COMBO_ONE));
+    }
+
+    @Test
+    public void hasTagCombo_tagComboInAddressBook_returnsTrue() {
+        addressBook.addTagCombo(TAG_COMBO_ONE);
+        assertTrue(addressBook.hasTagCombo(TAG_COMBO_ONE));
+    }
+
+    @Test
     public void toStringMethod() {
         String expected = AddressBook.class.getCanonicalName() + "{persons=" + addressBook.getPersonList()
-                + ", outlets=" + addressBook.getOutletList() + ", tagCombos=" + addressBook.getTagComboList() + "}";
+                + ", outlets=" + addressBook.getOutletList() + ", tagCombos=" + new UniqueTagComboList().toString()
+                + "}";
         assertEquals(expected, addressBook.toString());
     }
 

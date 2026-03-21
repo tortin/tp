@@ -18,6 +18,7 @@ public class TagComboTest {
     private final TagCombo firstTagCombo = new TagCombo(new TagComboName("one"), firstTagSet);
     private final TagCombo secondTagCombo = new TagCombo(new TagComboName("two"), secondTagSet);
     private final TagCombo thirdTagCombo = new TagCombo(new TagComboName("three"), thirdTagSet);
+    private final TagCombo fourthTagCombo = new TagCombo(new TagComboName("three"), thirdTagSet);
 
     @Test
     public void equals() {
@@ -35,6 +36,11 @@ public class TagComboTest {
     @Test
     public void isSameTagCombo_differentTagSetDifferentName_returnFalse() {
         assertFalse(firstTagCombo.isSameTagCombo(thirdTagCombo));
+    }
+
+    @Test
+    public void isSameTagCombo_sameNameDifferentTagSet_returnTrue() {
+        assertTrue(thirdTagCombo.isSameTagCombo(fourthTagCombo));
     }
 
     @Test

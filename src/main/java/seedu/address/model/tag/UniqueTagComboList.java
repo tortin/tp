@@ -3,11 +3,14 @@ package seedu.address.model.tag;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.exceptions.DuplicateTagComboException;
 import seedu.address.model.tag.exceptions.TagComboNotFoundException;
 
@@ -16,7 +19,7 @@ import seedu.address.model.tag.exceptions.TagComboNotFoundException;
  * An outlet is considered unique by comparing using {@code Outlet#isSameOutlet(Outlet)}.
  */
 public class UniqueTagComboList implements Iterable<TagCombo> {
-
+    private final HashMap<TagComboName, TagCombo> internalMap = new HashMap<TagComboName, TagCombo>();
     private final ObservableList<TagCombo> internalList = FXCollections.observableArrayList();
     private final ObservableList<TagCombo> internalUnmodifiableList =
             FXCollections.unmodifiableObservableList(internalList);
@@ -35,8 +38,9 @@ public class UniqueTagComboList implements Iterable<TagCombo> {
     public void add(TagCombo toAdd) {
         requireNonNull(toAdd);
         if (internalList.contains(toAdd)) {
-            throw new DuplicateTagComboException("A tag combo with the same tags already exists!");
+            throw new DuplicateTagComboException("A tag combo with the same tags or name already exists!");
         }
+        internalMap.put(toAdd.getName(), toAdd);
         internalList.add(toAdd);
     }
 
@@ -45,14 +49,23 @@ public class UniqueTagComboList implements Iterable<TagCombo> {
      */
     public void remove(TagCombo toRemove) {
         requireNonNull(toRemove);
-        if (!internalList.remove(toRemove)) {
+        if (!internalList.contains(toRemove)) {
             throw new TagComboNotFoundException();
         }
+        if (!internalMap.containsKey(toRemove.getName())) {
+            throw new TagComboNotFoundException();
+        }
+        internalMap.remove(toRemove.getName());
+        internalList.remove(toRemove);
     }
 
     public void setTagCombos(UniqueTagComboList tagCombos) {
         requireNonNull(tagCombos);
         internalList.setAll(tagCombos.internalList);
+        internalMap.clear();
+        for (TagCombo tagCombo : tagCombos.internalList) {
+            internalMap.put(tagCombo.getName(), tagCombo);
+        }
     }
 
     /**
@@ -62,6 +75,10 @@ public class UniqueTagComboList implements Iterable<TagCombo> {
         requireAllNonNull(tagCombos);
         if (!tagCombosAreUnique(tagCombos)) {
             throw new DuplicateTagComboException("There exists duplicate tag combos in the list!");
+        }
+        internalMap.clear();
+        for (TagCombo tagCombo : tagCombos) {
+            internalMap.put(tagCombo.getName(), tagCombo);
         }
         internalList.setAll(tagCombos);
     }
@@ -89,17 +106,21 @@ public class UniqueTagComboList implements Iterable<TagCombo> {
         }
 
         UniqueTagComboList otherUniquePersonList = (UniqueTagComboList) other;
-        return internalList.equals(otherUniquePersonList.internalList);
+        return internalList.equals(otherUniquePersonList.internalList)
+                && internalMap.equals(otherUniquePersonList.internalMap);
     }
 
     @Override
     public int hashCode() {
-        return internalList.hashCode();
+        return Objects.hash(internalList, internalMap);
     }
 
     @Override
     public String toString() {
-        return internalList.toString();
+        return new ToStringBuilder(this)
+                .add("internalList", internalList)
+                .add("internalMap", internalMap)
+                .toString();
     }
 
     /**

@@ -7,11 +7,13 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.exceptions.DuplicateTagComboException;
 import seedu.address.model.tag.exceptions.TagComboNotFoundException;
 
@@ -123,6 +125,10 @@ public class UniqueTagComboListTest {
 
     @Test
     public void toStringMethod() {
-        assertEquals(uniqueTagComboList.asUnmodifiableObservableList().toString(), uniqueTagComboList.toString());
+        assertEquals(new ToStringBuilder(uniqueTagComboList)
+                .add("internalList", uniqueTagComboList.asUnmodifiableObservableList())
+                .add("internalMap", new HashMap<TagComboName, TagCombo>())
+                .toString(),
+                uniqueTagComboList.toString());
     }
 }
